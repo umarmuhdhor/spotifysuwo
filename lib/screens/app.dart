@@ -18,18 +18,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Tabs[currentTabIndex],
-      backgroundColor: Colors.black,
+      
+      backgroundColor: Colors.transparent,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentTabIndex,
         onTap: (currentIndex) {
           currentTabIndex = currentIndex;
-          setState(() {
-            
-          });
+          setState(() {});
         },
         selectedLabelStyle: TextStyle(color: Colors.white),
         selectedItemColor: Colors.white,
-        backgroundColor: Colors.black45,
+        backgroundColor: Colors.black,
         items: [
           BottomNavigationBarItem(
               icon: Icon(Icons.home, color: Colors.white), label: 'Home'),
