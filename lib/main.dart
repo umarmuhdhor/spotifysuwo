@@ -5,5 +5,6 @@ void main() {
   runApp(MaterialApp(
       title: 'Spotify Clone',
       debugShowCheckedModeBanner: false,
-      home: MyApp()));
+      home: MyApp()),
+      );
 }
