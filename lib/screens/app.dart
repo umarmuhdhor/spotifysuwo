@@ -13,7 +13,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final Tabs = [Home(), Search(), YourLibrary()];
   int currentTabIndex = 0;
-  //UI DESIGN CODE
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,10 +25,10 @@ class _MyAppState extends State<MyApp> {
           currentTabIndex = currentIndex;
           setState(() {});
         },
-        selectedLabelStyle: TextStyle(color: Colors.white),
+        selectedLabelStyle: const TextStyle(color: Colors.white),
         selectedItemColor: Colors.white,
         backgroundColor: Colors.black,
-        items: [
+        items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.home, color: Colors.white), label: 'Home'),
           BottomNavigationBarItem(

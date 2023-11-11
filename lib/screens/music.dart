@@ -8,20 +8,20 @@ class Music extends StatelessWidget {
 
   Widget createGrid() {
     return Container(
-      margin: EdgeInsets.only(right: 5, left: 5),
+      margin: const EdgeInsets.only(right: 5, left: 5),
       child: GridView.count(
-          childAspectRatio: 6 / 2,
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 5,
-          children: createListCategory(),
-          crossAxisCount: 2,
-          shrinkWrap: true),
+        childAspectRatio: 6 / 2,
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 5,
+        children: createListCategory(),
+        crossAxisCount: 2,
+        shrinkWrap: true,
+      ),
     );
   }
 
   createListCategory() {
     List<Category> categoryList = CategoryOperations.getCategory();
-    //Mengubah Data ke tipe widget
     List<Widget> categories = categoryList
         .map((Category category) => createCategory(category))
         .toList();
@@ -31,7 +31,7 @@ class Music extends StatelessWidget {
   Widget createCategory(Category category) {
     return Container(
       decoration: ShapeDecoration(
-        color: Color(0xA5D9D9D9),
+        color: const Color(0xA5D9D9D9),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       ),
       child: Row(
@@ -47,7 +47,7 @@ class Music extends StatelessWidget {
                 textAlign: TextAlign.left,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
                   fontFamily: 'Gotham Black',
@@ -67,7 +67,14 @@ class Music extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+            colors: [Color.fromRGBO(56, 27, 136, 1), Colors.black],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.1, 0.6],
+          )),
           child: Column(
             children: [
               createGrid(),
@@ -82,7 +89,7 @@ class Music extends StatelessWidget {
                   children: [
                     Container(
                       margin: EdgeInsets.only(bottom: 10),
-                      child: Text("Recomendasi Untukmu",
+                      child: const Text("Recomendasi Untukmu",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -139,12 +146,6 @@ class Music extends StatelessWidget {
               ),
             ],
           ),
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Color.fromRGBO(10, 126, 0, 1), Colors.black],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [0.1, 0.6])),
         ),
       ),
     );
@@ -225,7 +226,7 @@ class _RecommendedState extends State<Recommended> {
                   decoration: BoxDecoration(
                     color: currentIndex == index
                         ? Colors.grey
-                        : null, // Warna latar belakang item yang dipilih
+                        : null,
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
@@ -245,8 +246,7 @@ class _RecommendedState extends State<Recommended> {
             viewportFraction: 0.29,
             onPageChanged: (index, reason) {
               setState(() {
-                currentIndex =
-                    index;
+                currentIndex = index;
               });
             },
           ),

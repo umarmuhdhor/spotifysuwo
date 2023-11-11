@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:spotifyclone/models/type.dart';
 import 'package:spotifyclone/screens/podcast.dart';
 import 'package:spotifyclone/screens/music.dart';
 import 'package:spotifyclone/screens/radio.dart';
-import 'package:spotifyclone/services/typeOperations.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,46 +17,9 @@ class _Home extends State<Home> {
     return index == currentTabIndex ? Color(0xB2D9D9D9) : Colors.transparent;
   }
 
-  Widget createType(Type type) {
-    return Container(
-      decoration: ShapeDecoration(
-        color: Color(0xA5D9D9D9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(5.0),
-            child: Image.network(type.icon, fit: BoxFit.cover),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 5),
-            child: Text(
-              type.name,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontFamily: 'Harmattan',
-                fontWeight: FontWeight.w500,
-                height: 0,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  createListType() {
-    List<Type> typeList = TypeOperations.getType();
-    //Mengubah Data ke tipe widget
-    List<Widget> types = typeList.map((Type type) => createType(type)).toList();
-    return types;
-  }
-
   createAppBar() {
     return AppBar(
-      backgroundColor: Color.fromRGBO(10, 126, 0, 1),
+      backgroundColor: Color.fromRGBO(56, 27, 136, 1),
       elevation: 0.0,
       title: Padding(
         padding: const EdgeInsets.only(top: 10),
@@ -79,7 +40,7 @@ class _Home extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  shadows: [
+                  shadows: const [
                     BoxShadow(
                       color: Color(0x3F000000),
                       blurRadius: 5,
