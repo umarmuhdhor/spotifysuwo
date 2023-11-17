@@ -1,5 +1,7 @@
 class Category {
   String name;
   String image;
-  Category(this.name, this.image);
-}
+  List<int> songIds; 
+
+  Category(this.name, this.image, {required this.songIds});
+  }

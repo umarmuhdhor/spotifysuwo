@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:spotifyclone/screens/searchScreen.dart';
-import 'package:spotifyclone/services/categoryOperations.dart';
-import 'package:spotifyclone/models/category.dart';
+import 'package:Suwotify/screens/searchScreen.dart';
+import 'package:Suwotify/services/categoryOperations.dart';
+import 'package:Suwotify/models/category.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class Search extends StatelessWidget {
@@ -29,8 +29,8 @@ class Search extends StatelessWidget {
 
   Widget createCategory(Category category) {
     return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xA5D9D9D9),
+      decoration: const BoxDecoration(
+        color: Color(0xA5D9D9D9),
       ),
       child: Row(
         children: [
@@ -144,8 +144,8 @@ class Search extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Text("Recomendasi Untukmu",
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: const Text("Recomendasi Untukmu",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,

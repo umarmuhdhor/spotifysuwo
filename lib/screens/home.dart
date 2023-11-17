@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:spotifyclone/screens/podcast.dart';
-import 'package:spotifyclone/screens/music.dart';
-import 'package:spotifyclone/screens/radio.dart';
+import 'package:Suwotify/screens/podcast.dart';
+import 'package:Suwotify/screens/music.dart';
+import 'package:Suwotify/screens/radio.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -14,12 +14,12 @@ class _Home extends State<Home> {
   int currentTabIndex = 0;
 
   Color tabColor(int index) {
-    return index == currentTabIndex ? Color(0xB2D9D9D9) : Colors.transparent;
+    return index == currentTabIndex ? const Color(0xB2D9D9D9) : Colors.transparent;
   }
 
   createAppBar() {
     return AppBar(
-      backgroundColor: Color.fromRGBO(56, 27, 136, 1),
+      backgroundColor: const Color.fromRGBO(56, 27, 136, 1),
       elevation: 0.0,
       title: Padding(
         padding: const EdgeInsets.only(top: 10),
@@ -32,7 +32,7 @@ class _Home extends State<Home> {
                 });
               },
               child: Container(
-                margin: EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: 10),
                 width: 72,
                 height: 25,
                 decoration: ShapeDecoration(
@@ -49,7 +49,7 @@ class _Home extends State<Home> {
                     ),
                   ],
                 ),
-                child: Center(
+                child:const Center(
                   child: Text(
                     'Music',
                     style: TextStyle(
@@ -70,7 +70,7 @@ class _Home extends State<Home> {
                 });
               },
               child: Container(
-                margin: EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: 10),
                 width: 70,
                 height: 25,
                 decoration: ShapeDecoration(
@@ -78,7 +78,7 @@ class _Home extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  shadows: [
+                  shadows: const[
                     BoxShadow(
                       color: Color(0x3F000000),
                       blurRadius: 5,
@@ -87,7 +87,7 @@ class _Home extends State<Home> {
                     ),
                   ],
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     'Podcast',
                     style: TextStyle(
@@ -116,7 +116,7 @@ class _Home extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  shadows: [
+                  shadows: const[
                     BoxShadow(
                       color: Color(0x3F000000),
                       blurRadius: 5,
@@ -125,7 +125,7 @@ class _Home extends State<Home> {
                     ),
                   ],
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     'Radio',
                     style: TextStyle(
@@ -142,7 +142,7 @@ class _Home extends State<Home> {
           ],
         ),
       ),
-      actions: [
+      actions: const[
         Padding(
             padding: EdgeInsets.only(right: 10, top: 10),
             child: Icon(Icons.history)),
