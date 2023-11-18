@@ -1,3 +1,6 @@
+import 'dart:js';
+
+import 'package:Suwotify/screens/detailMusic.dart';
 import 'package:Suwotify/services/baseAPI/song.dart';
 import 'package:flutter/material.dart';
 import 'package:Suwotify/services/categoryOperations.dart';
@@ -6,9 +9,14 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class Music extends StatelessWidget {
+class Music extends StatefulWidget {
   const Music({Key? key}) : super(key: key);
 
+  @override
+  State<Music> createState() => _MusicState();
+}
+
+class _MusicState extends State<Music> {
   Widget createGrid() {
     return Container(
       margin: const EdgeInsets.only(right: 5, left: 5),
@@ -154,8 +162,8 @@ class Music extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: Text("Recomendasi Untukmu",
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: Text("Rekomendasi Untukmu",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -176,38 +184,58 @@ class Music extends StatelessWidget {
   }
 }
 
-class lastHeard extends StatelessWidget {
-  Future<dynamic> getDataMusic(String type) async {
-    String fullUrl = '';
+class lastHeard extends StatefulWidget {
+  @override
+  State<lastHeard> createState() => _lastHeardState();
+}
+
+class _lastHeardState extends State<lastHeard> {
+  List<dynamic> dataMusic = [];
+  List<MusicImage> imageMusic = [];
+
+  bool loadingStatus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getAllMusic();
+  }
+
+  Future<void> getAllMusic() async {
+    setState(() {
+      loadingStatus = true;
+    });
     try {
-      http.Response? response = await getSong(type);
-      if (response != null) {
-        var savedData = json.decode(response.body);
-        print('Saved Data: $savedData');
-        return savedData;
-      } else {
-        print('Gagal mengambil data');
-        return '';
+      http.Response? response = await getAllSong('image');
+      final decodedData = json.decode(response!.body);
+
+      setState(() {
+        dataMusic = Map.from(decodedData).values.toList();
+        loadingStatus = false;
+      });
+      // print(dataMusic);
+
+      if (dataMusic != null) {
+        for (int i = 0; i < dataMusic[0].length; i++) {
+          int id = dataMusic[0][i]['id'];
+          String url = (dataMusic[0][i]['attributes']['image']['data']
+              ['attributes']['formats']['thumbnail']['url']);
+          imageMusic.add(MusicImage(id: id, url: "http://localhost:1337$url"));
+        }
+        print(imageMusic[5].id);
       }
-    } catch (e) {
-      print('Error: $e');
-      return '';
+
+      print(dataMusic[0]['attributes']['image']['data']['attributes']['formats']
+          ['thumbnail']['url']);
+    } catch (error) {
+      print(error.toString());
     }
   }
 
-  final List<String> images = [
-    'images/Category1.jpg',
-    'images/Category2.jpg',
-    'images/Category3.jpg',
-    'images/Category4.jpg',
-    'images/Category5.jpg',
-    'images/Category6.jpg',
-  ];
   @override
   Widget build(BuildContext context) {
-    getDataMusic('audio8d');
     return CarouselSlider(
-      items: images.map((image) {
+      items: imageMusic.map((item) {
         return Builder(
           builder: (BuildContext context) {
             return Container(
@@ -215,9 +243,14 @@ class lastHeard extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 5.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.cover,
+                child: GestureDetector(
+                  onTap: () {
+                    navigateToDetailMusic(context,item.id);
+                  },
+                  child: Image.network(
+                    item.url,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             );
@@ -317,4 +350,20 @@ class _RecommendedState extends State<Recommended> {
       ),
     );
   }
+}
+
+class MusicImage {
+  final int id;
+  final String url;
+
+  MusicImage({required this.id, required this.url});
+}
+
+void navigateToDetailMusic(BuildContext context, int musicId) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => detailMusic(musicId: musicId),
+    ),
+  );
 }

@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class detailMusic extends StatefulWidget {
-  const detailMusic({super.key});
+  final int musicId;
+  const detailMusic({super.key, required this.musicId});
   @override
   State<detailMusic> createState() => _detailMusicState();
 }
@@ -14,22 +15,25 @@ class detailMusic extends StatefulWidget {
 class _detailMusicState extends State<detailMusic> {
   late Future<dynamic> _dataFuture;
   late AudioPlayer _audioPlayer;
+  late int musicId;
   bool isPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    _dataFuture = getDataMusic('audio8d');
     _audioPlayer = AudioPlayer();
+    musicId = widget.musicId;
+    _dataFuture = getDataMusic('audio8d', musicId);
   }
 
-  Future<dynamic> getDataMusic(String type) async {
+  Future<dynamic> getDataMusic(String type, int id) async {
     try {
-      http.Response? response = await getSong(type);
+      http.Response? response = await getSong(type, id);
       if (response != null) {
         var savedData = json.decode(response.body);
-        dynamic url = savedData['data'][0]['attributes'][type]['data']
-            ['attributes']['url'];
+        dynamic url =
+            savedData['data']['attributes'][type]['data']['attributes']['url'];
+        print(url);
         return 'http://localhost:1337$url';
       } else {
         print('Failed to fetch data/Gagal mengambil data');
@@ -106,10 +110,8 @@ class _detailMusicState extends State<detailMusic> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(25),
-                      child: Image.asset(
-                        'images/Category1.jpg',
-                        width: 320,
-                        height: 320,
+                      child: Image.network(
+                        fullUrl,
                         fit: BoxFit.cover,
                       ),
                     ),

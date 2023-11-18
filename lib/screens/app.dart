@@ -21,29 +21,29 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: detailMusic()
-      // Tabs[currentTabIndex],
+      body:
+      Tabs[currentTabIndex],
       
-      // backgroundColor: Colors.transparent,
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: currentTabIndex,
-      //   onTap: (currentIndex) {
-      //     currentTabIndex = currentIndex;
-      //     setState(() {});
-      //   },
-      //   selectedLabelStyle: const TextStyle(color: Colors.white),
-      //   selectedItemColor: Colors.white,
-      //   backgroundColor: Colors.black,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.home, color: Colors.white), label: 'Home'),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.search, color: Colors.white), label: 'search'),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.library_books, color: Colors.white),
-      //         label: 'library')
-      //   ],
-      // ),
+      backgroundColor: Colors.transparent,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentTabIndex,
+        onTap: (currentIndex) {
+          currentTabIndex = currentIndex;
+          setState(() {});
+        },
+        selectedLabelStyle: const TextStyle(color: Colors.white),
+        selectedItemColor: Colors.white,
+        backgroundColor: Colors.black,
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home, color: Colors.white), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.search, color: Colors.white), label: 'search'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.library_books, color: Colors.white),
+              label: 'library')
+        ],
+      ),
     );
   }
 }
