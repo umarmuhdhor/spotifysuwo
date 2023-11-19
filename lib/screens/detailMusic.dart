@@ -12,8 +12,16 @@ class detailMusic extends StatefulWidget {
   State<detailMusic> createState() => _detailMusicState();
 }
 
+class MusicData {
+  final String imageUrl;
+  final String audioUrl;
+
+  MusicData(this.imageUrl, this.audioUrl);
+}
+
+// ignore: camel_case_types
 class _detailMusicState extends State<detailMusic> {
-  late Future<dynamic> _dataFuture;
+  late Future<MusicData> _dataFuture;
   late AudioPlayer _audioPlayer;
   late int musicId;
   bool isPlaying = false;
@@ -23,25 +31,34 @@ class _detailMusicState extends State<detailMusic> {
     super.initState();
     _audioPlayer = AudioPlayer();
     musicId = widget.musicId;
-    _dataFuture = getDataMusic('audio8d', musicId);
+    _dataFuture = getDataMusic(musicId);
   }
 
-  Future<dynamic> getDataMusic(String type, int id) async {
+  Future<MusicData> getDataMusic(int id) async {
     try {
-      http.Response? response = await getSong(type, id);
-      if (response != null) {
-        var savedData = json.decode(response.body);
-        dynamic url =
-            savedData['data']['attributes'][type]['data']['attributes']['url'];
-        print(url);
-        return 'http://localhost:1337$url';
+      http.Response? imageResponse = await getSong('image', id);
+      http.Response? audioResponse = await getSong('audio', id);
+
+      if (imageResponse != null && audioResponse != null) {
+        var savedImageData = json.decode(imageResponse.body);
+        // ignore: prefer_interpolation_to_compose_strings
+        String imageUrl = 'http://localhost:1337' +
+            savedImageData['data']['attributes']['image']['data']['attributes']
+                ['url'];
+
+        var savedAudioData = json.decode(audioResponse.body);
+        String audioUrl = 'http://localhost:1337' +
+            savedAudioData['data']['attributes']['audio']['data']['attributes']
+                ['url'];
+
+        return MusicData(imageUrl, audioUrl);
       } else {
         print('Failed to fetch data/Gagal mengambil data');
-        return '';
+        throw Exception('Failed to fetch data');
       }
     } catch (e) {
       print('Error: $e');
-      return '';
+      throw Exception('Error: $e');
     }
   }
 
@@ -65,7 +82,6 @@ class _detailMusicState extends State<detailMusic> {
     return AppBar(
       backgroundColor: const Color.fromRGBO(56, 27, 136, 1),
       elevation: 0.0,
-      title: const Text('tes'),
     );
   }
 
@@ -74,18 +90,19 @@ class _detailMusicState extends State<detailMusic> {
     return Scaffold(
       appBar: createAppBar(),
       body: SingleChildScrollView(
-        child: FutureBuilder(
+        child: FutureBuilder<MusicData>(
           future: _dataFuture,
-          builder: (context, Data) {
-            if (Data.connectionState == ConnectionState.waiting) {
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            } else if (Data.hasError) {
-              return Center(child: Text('Error: ${Data.error}'));
-            } else if (!Data.hasData || Data.data == '') {
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data?.imageUrl == '') {
               return const Center(child: Text('No data available'));
             }
 
-            String fullUrl = Data.data as String;
+            String imageUrl = snapshot.data!.imageUrl;
+            String audioUrl = snapshot.data!.audioUrl;
 
             return Container(
               width: MediaQuery.of(context).size.width,
@@ -111,7 +128,7 @@ class _detailMusicState extends State<detailMusic> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(25),
                       child: Image.network(
-                        fullUrl,
+                        imageUrl,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -164,7 +181,7 @@ class _detailMusicState extends State<detailMusic> {
                                   .listen((PlayerState state) {
                                 print('lagi diputar: $state');
                               });
-                              playAudio(fullUrl);
+                              playAudio(audioUrl);
                             },
                             child: Icon(
                               isPlaying ? Icons.stop : Icons.play_arrow,
