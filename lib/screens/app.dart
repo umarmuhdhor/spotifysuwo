@@ -1,11 +1,8 @@
-import 'package:Suwotify/models/category.dart';
-import 'package:Suwotify/screens/detailMusic.dart';
-import 'package:Suwotify/services/categoryOperations.dart';
+import 'package:Suwotify/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:Suwotify/screens/home.dart';
 import 'package:Suwotify/screens/search.dart';
 import 'package:Suwotify/screens/yourLibrary.dart';
-import './../services/baseAPI/song.dart';
 
 
 class MyApp extends StatefulWidget {
@@ -22,6 +19,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:
+      // LoginPage()
+      //  YourLibrary()
       Tabs[currentTabIndex],
       
       backgroundColor: Colors.transparent,
@@ -29,7 +28,9 @@ class _MyAppState extends State<MyApp> {
         currentIndex: currentTabIndex,
         onTap: (currentIndex) {
           currentTabIndex = currentIndex;
-          setState(() {});
+          setState(() {
+            
+          });
         },
         selectedLabelStyle: const TextStyle(color: Colors.white),
         selectedItemColor: Colors.white,

@@ -43,3 +43,31 @@ Future<http.Response?> getSong(String type, int id) async {
     return null;
   }
 }
+
+Future<http.Response?> getPlaylist(String type, String token) async {
+  String apiUrl = '';
+  if (type == 'none') {
+    apiUrl = '${Config.baseUrl}/playlists';
+  } else {
+    apiUrl = '${Config.baseUrl}/playlists?populate[0]=$type';
+  }
+  try {
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization': 'Bearer $token', 
+        // 'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      // print(response.body);
+      return response;
+    } else {
+      print('Gagal mengambil data audio: ${response.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    // print('Error: $e');
+    return null;
+  }
+}

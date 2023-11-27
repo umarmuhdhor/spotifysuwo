@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:Suwotify/models/category.dart';
 import 'package:Suwotify/services/baseAPI/song.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,6 @@ class MusicData {
   MusicData(this.imageUrl, this.audioUrl);
 }
 
-// ignore: camel_case_types
 class _detailMusicState extends State<detailMusic> {
   late Future<MusicData> _dataFuture;
   late AudioPlayer _audioPlayer;
@@ -41,7 +39,6 @@ class _detailMusicState extends State<detailMusic> {
 
       if (imageResponse != null && audioResponse != null) {
         var savedImageData = json.decode(imageResponse.body);
-        // ignore: prefer_interpolation_to_compose_strings
         String imageUrl = 'http://localhost:1337' +
             savedImageData['data']['attributes']['image']['data']['attributes']
                 ['url'];
@@ -54,7 +51,7 @@ class _detailMusicState extends State<detailMusic> {
         return MusicData(imageUrl, audioUrl);
       } else {
         print('Failed to fetch data/Gagal mengambil data');
-        throw Exception('Failed to fetch data');
+        throw Exception('Gagal mengambil data');
       }
     } catch (e) {
       print('Error: $e');
@@ -163,7 +160,7 @@ class _detailMusicState extends State<detailMusic> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
-                            Icons.arrow_back_ios_rounded,
+                            Icons.keyboard_double_arrow_left_rounded,
                             color: Colors.white,
                             size: 30,
                           ),

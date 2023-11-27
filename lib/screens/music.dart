@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:Suwotify/screens/detailMusic.dart';
 import 'package:Suwotify/services/baseAPI/song.dart';
 import 'package:flutter/material.dart';
@@ -121,12 +119,12 @@ class _MusicState extends State<Music> {
                   children: [
                     Container(
                       margin: const EdgeInsets.only(bottom: 10),
-                      child: const Text("Recomendasi Untukmu",
+                      child: const Text("Rekomendasi Untukmu",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontFamily: 'Gotham Black',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                             height: 0,
                           )),
                     ),
@@ -135,44 +133,44 @@ class _MusicState extends State<Music> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 30, right: 10, left: 10),
-                alignment: Alignment.topLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: Text("Recomendasi Untukmu",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontFamily: 'Gotham Black',
-                            fontWeight: FontWeight.w500,
-                            height: 0,
-                          )),
-                    ),
-                    // Recommended(),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 30, right: 10, left: 10),
+                margin: const EdgeInsets.only(top: 30, right: 10, left: 10),
                 alignment: Alignment.topLeft,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       margin: const EdgeInsets.only(bottom: 10),
-                      child: Text("Rekomendasi Untukmu",
+                      child: const Text("Rekomendasi",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontFamily: 'Gotham Black',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                             height: 0,
                           )),
                     ),
-                    // Recommended(),
+                    Recommended(),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 30, right: 10, left: 10),
+                alignment: Alignment.topLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: const Text("Rekomendasi",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontFamily: 'Gotham Black',
+                            fontWeight: FontWeight.bold,
+                            height: 0,
+                          )),
+                    ),
+                    Recommended(),
                   ],
                 ),
               ),
@@ -187,6 +185,13 @@ class _MusicState extends State<Music> {
 class lastHeard extends StatefulWidget {
   @override
   State<lastHeard> createState() => _lastHeardState();
+}
+
+class MusicImage {
+  final int id;
+  final String url;
+
+  MusicImage({required this.id, required this.url});
 }
 
 class _lastHeardState extends State<lastHeard> {
@@ -245,7 +250,7 @@ class _lastHeardState extends State<lastHeard> {
                 borderRadius: BorderRadius.circular(10),
                 child: GestureDetector(
                   onTap: () {
-                    navigateToDetailMusic(context,item.id);
+                    navigateToDetailMusic(context, item.id);
                   },
                   child: Image.network(
                     item.url,
@@ -297,17 +302,17 @@ class _RecommendedState extends State<Recommended> {
           builder: (BuildContext context) {
             return currentIndex == index
                 ? Container(
-                    height: imageHeight + 50,
+                    height: imageHeight,
                     margin: const EdgeInsets.symmetric(horizontal: 5.0),
                     decoration: BoxDecoration(
-                      color: Color(0x7FD9D9D9),
+                      color: const Color(0x7FD9D9D9),
                       shape: BoxShape.rectangle,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
                       children: [
                         Container(
-                          margin: EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(10),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.asset(
@@ -317,7 +322,7 @@ class _RecommendedState extends State<Recommended> {
                             ),
                           ),
                         ),
-                        Text("halo")
+                        Text("HAAAAAAAAA"),
                       ],
                     ),
                   )
@@ -328,7 +333,6 @@ class _RecommendedState extends State<Recommended> {
                       borderRadius: BorderRadius.circular(10),
                       child: Image.asset(
                         image,
-                        fit: BoxFit.fill,
                         height: imageHeight,
                       ),
                     ),
@@ -352,11 +356,87 @@ class _RecommendedState extends State<Recommended> {
   }
 }
 
-class MusicImage {
-  final int id;
-  final String url;
+class justReleased extends StatefulWidget {
+  @override
+  State<justReleased> createState() => _justReleasedState();
+}
 
-  MusicImage({required this.id, required this.url});
+class _justReleasedState extends State<justReleased> {
+  final List<String> images = [
+    'images/Category1.jpg',
+    'images/Category2.jpg',
+    'images/Category3.jpg',
+    'images/Category4.jpg',
+    'images/Category5.jpg',
+    'images/Category6.jpg',
+  ];
+
+  int currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    double imageHeight = MediaQuery.of(context).size.width * 0.2;
+
+    return CarouselSlider(
+      items: images.asMap().entries.map((entry) {
+        final index = entry.key;
+        final image = entry.value;
+        return Builder(
+          builder: (BuildContext context) {
+            return currentIndex == index
+                ? Container(
+                    height: imageHeight,
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    decoration: BoxDecoration(
+                      color: Color(0x7FD9D9D9),
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(10),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.asset(
+                              image,
+                              fit: BoxFit.fill,
+                              height: imageHeight,
+                            ),
+                          ),
+                        ),
+                        Text("HAAAAAAAAA"),
+                      ],
+                    ),
+                  )
+                : Container(
+                    height: imageHeight,
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        image,
+                        height: imageHeight,
+                      ),
+                    ),
+                  );
+          },
+        );
+      }).toList(),
+      options: CarouselOptions(
+        padEnds: false,
+        autoPlay: true,
+        height: imageHeight + 50,
+        aspectRatio: 1.0,
+        viewportFraction: 0.29,
+        onPageChanged: (index, reason) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+      ),
+    );
+  }
 }
 
 void navigateToDetailMusic(BuildContext context, int musicId) {
