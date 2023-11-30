@@ -1,12 +1,13 @@
 import 'dart:convert';
+import 'package:Suwotify/screens/playlistScreen.dart';
+import 'package:Suwotify/services/baseAPI/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:Suwotify/components/StorageKey.dart';
 import 'package:Suwotify/screens/library/libraryMusic.dart';
 import 'package:Suwotify/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Suwotify/services/baseAPI/song.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:Suwotify/services/baseAPI/playlist.dart';
 
 class YourLibrary extends StatefulWidget {
   const YourLibrary({Key? key}) : super(key: key);
@@ -203,7 +204,7 @@ class _YourLibraryState extends State<YourLibrary> {
       appBar: createAppBar(),
       body: token == ''
           ? Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color.fromRGBO(56, 27, 136, 1), Colors.black],
                   begin: Alignment.topCenter,
@@ -213,8 +214,8 @@ class _YourLibraryState extends State<YourLibrary> {
               ),
               child: Center(
                 child: Container(
-                  width: 154,
-                  height: 33,
+                  width: 200,
+                  height: 35,
                   decoration: ShapeDecoration(
                     color: Color.fromRGBO(56, 27, 136, 1),
                     shape: RoundedRectangleBorder(
@@ -255,15 +256,26 @@ class _YourLibraryState extends State<YourLibrary> {
                 child: Column(
                   children: [
                     createNavBarTop(),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                      ),
-                      child: Text(
-                        'Add New',
-                        style: TextStyle(
-                          color: Colors.white,
+                    Container(
+                      width: 150,
+                      height: 35,
+                      margin: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.transparent,
+                          padding: const EdgeInsets.all(10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 0,
+                          minimumSize: const Size.fromHeight(50),
+                        ),
+                        child: const Text(
+                          'Add New',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -298,6 +310,8 @@ class playlistData {
 class _playlistState extends State<playlist> {
   List<dynamic> dataPlaylist = [];
   List<playlistData> playlist = [];
+  int idUser = 0;
+  List<dynamic> dataUser = [];
   int currentIndex = 0;
 
   bool loadingStatus = false;
@@ -305,19 +319,41 @@ class _playlistState extends State<playlist> {
   @override
   void initState() {
     super.initState();
+    //apo ni
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      getAllMusic();
+      getAllPlaylist();
     });
   }
 
-  Future<void> getAllMusic() async {
+  Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       loadingStatus = true;
     });
     try {
       http.Response? response =
-          await getPlaylist('image', prefs.getString(StorageKey.TOKEN) ?? "");
+          await getUser(prefs.getString(StorageKey.TOKEN) ?? "");
+      final decodedData = json.decode(response!.body);
+
+      setState(() {
+        dataUser = Map.from(decodedData).values.toList();
+        loadingStatus = false;
+      });
+      idUser = (dataUser[0]);
+      print("id : $idUser");
+    } catch (error) {
+      print(error.toString());
+    }
+  }
+
+  Future<void> getAllPlaylist() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loadingStatus = true;
+    });
+    try {
+      http.Response? response = await getPlaylist(
+          'image', 'users', prefs.getString(StorageKey.TOKEN) ?? "");
 
       final decodedData = json.decode(response!.body);
 
@@ -327,24 +363,25 @@ class _playlistState extends State<playlist> {
       });
 
       if (dataPlaylist != null) {
+        await getUserData();
         for (int i = 0; i < dataPlaylist[0].length; i++) {
           print(dataPlaylist[0]);
           int id = dataPlaylist[0][i]['id'];
           String url = (dataPlaylist[0][i]['attributes']['image']['data']
               ['attributes']['formats']['thumbnail']['url']);
-          print("url : $url");
           String name = (dataPlaylist[0][i]['attributes']['name']);
-          print("name : $name");
           String deskripsi = (dataPlaylist[0][i]['attributes']['deskripsi']);
-          print("deskripsi : $deskripsi");
-
-          playlist.add(
-            playlistData(
+          int user = (dataPlaylist[0][i]['attributes']['users']['data']['id']);
+          if (user == idUser) {
+            playlist.add(
+              playlistData(
                 id: id,
                 url: "http://localhost:1337$url",
                 description: deskripsi,
-                name: name),
-          );
+                name: name,
+              ),
+            );
+          }
         }
       }
     } catch (error) {
@@ -361,29 +398,64 @@ class _playlistState extends State<playlist> {
         itemBuilder: (BuildContext context, int index) {
           final currentPlaylist = playlist[index];
 
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5.0),
-            decoration: BoxDecoration(
-              color: const Color(0x7FD9D9D9),
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  width: 100,
-                  height: 100,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      currentPlaylist.url,
-                      fit: BoxFit.fill,
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlaylistScreen(id: currentPlaylist.id),
+                ),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5.0),
+              decoration: BoxDecoration(
+                color: const Color(0x7FD9D9D9),
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    width: 100,
+                    height: 100,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        currentPlaylist.url,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
-                ),
-                Text(currentPlaylist.name),
-              ],
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        child: Text(
+                          currentPlaylist.name,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        child: Text(
+                          currentPlaylist.description,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
         },

@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:Suwotify/components/StorageKey.dart';
 import 'package:Suwotify/screens/app.dart';
 import 'package:Suwotify/screens/favortieScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/baseAPI/user.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -10,9 +14,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 Future<void> logoutUser(BuildContext context) async {
+  
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString(StorageKey.TOKEN, '');
-  print(prefs.getString(StorageKey.TOKEN));
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (context) => MyApp()),
@@ -21,6 +25,43 @@ Future<void> logoutUser(BuildContext context) async {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String name = '';
+  String email = '';
+  List<dynamic> dataUser = [];
+  bool loadingStatus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  Future<void> getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loadingStatus = true;
+    });
+    try {
+      http.Response? response =
+          await getUser(prefs.getString(StorageKey.TOKEN) ?? "");
+
+      final decodedData = json.decode(response!.body);
+
+      setState(() {
+        dataUser = Map.from(decodedData).values.toList();
+        loadingStatus = false;
+      });
+      name = (dataUser[1]);
+      print("name : $name");
+      email = (dataUser[2]);
+      print("email : $email");
+
+
+    } catch (error) {
+      print(error.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,33 +91,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.white,
-                // Add your profile picture here
-                // backgroundImage: AssetImage('assets/profile_image.jpg'),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Text(
-                "Nama Pengguna",
-                style: TextStyle(
+                name,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
-                "email@example.com",
-                style: TextStyle(
+                email,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16.0,
                 ),
               ),
-              Spacer(), // Spacer untuk mengisi ruang di antara teks dan tombol
+              const Spacer(), 
               ElevatedButton(
                 onPressed: () {
-                  // Navigasi ke halaman Favorite
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => FavoriteScreen()),
@@ -88,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   "Favorite",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -96,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24.0),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
@@ -111,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: Container(
                     width: double.infinity, // Lebar tombol mengisi layar penuh
-                    child: Text(
+                    child: const Text(
                       "Logout",
                       textAlign: TextAlign.center,
                       style: TextStyle(

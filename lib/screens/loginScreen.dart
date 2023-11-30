@@ -5,6 +5,7 @@ import 'package:Suwotify/screens/registerScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/baseAPI/massageHandle.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,6 +15,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  FocusNode usernameFocusNode = FocusNode();
+  String? _errorTextPass;
+  String? _errorTextEmail;
+
+  bool showUsernameError = false;
 
   Future<void> loginUser() async {
     final String apiUrl = "http://localhost:1337/api/auth/local";
@@ -42,9 +48,12 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         print("Login Gagal: ${response.statusCode}");
         print("Pesan Kesalahan: ${response.body}");
+        final responseData = jsonDecode(response.body);
+        final errorMessage = responseData['error']['message'];
+        showErrorAlert(context, errorMessage);
       }
     } catch (error) {
-      print("Kesalahan: $error");
+      print("Error: $error");
     }
   }
 
@@ -83,7 +92,9 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     TextField(
                       controller: emailController,
+                      focusNode: usernameFocusNode,
                       decoration: InputDecoration(
+                        errorText: _errorTextEmail,
                         labelText: "Username/Email",
                         labelStyle: const TextStyle(
                           fontWeight: FontWeight.bold,
@@ -102,12 +113,20 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: const BorderSide(color: Colors.black),
                         ),
                       ),
+                      onChanged: (value) {
+                        setState(() {
+                          emailController.text.isEmpty
+                              ? _errorTextEmail = 'Input cannot be empty'
+                              : _errorTextEmail = null;
+                        });
+                      },
                     ),
                     const SizedBox(height: 10),
                     TextField(
                       controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
+                        errorText: _errorTextPass,
                         labelText: "Password",
                         labelStyle: const TextStyle(
                           fontWeight: FontWeight.bold,
@@ -129,6 +148,13 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: const BorderSide(color: Colors.black),
                         ),
                       ),
+                      onChanged: (value) {
+                        setState(() {
+                          passwordController.text.isEmpty
+                              ? _errorTextPass = 'Input cannot be empty'
+                              : _errorTextPass = null;
+                        });
+                      },
                     ),
                     Container(
                       padding: EdgeInsets.all(16.0),

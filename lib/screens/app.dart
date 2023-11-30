@@ -1,4 +1,3 @@
-import 'package:Suwotify/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:Suwotify/screens/home.dart';
 import 'package:Suwotify/screens/search.dart';
