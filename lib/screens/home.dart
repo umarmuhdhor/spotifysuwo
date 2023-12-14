@@ -10,12 +10,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
   @override
+  // ignore: library_private_types_in_public_api
   _Home createState() => _Home();
 }
 
 class _Home extends State<Home> {
   String token = '';
-  final Tab = [Music(), Podcast(), RadioScreen()];
+  // ignore: non_constant_identifier_names
+  final Tab = [const Music(), const Podcast(), const RadioScreen()];
   int currentTabIndex = 0;
 
   Color tabColor(int index) {
@@ -46,7 +48,7 @@ class _Home extends State<Home> {
             ? Padding(
                 padding: const EdgeInsets.only(right: 10, top: 10),
                 child: IconButton(
-                  icon: Icon(Icons.account_circle),
+                  icon: const Icon(Icons.account_circle),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -58,21 +60,21 @@ class _Home extends State<Home> {
             : Padding(
                 padding: const EdgeInsets.only(right: 10, top: 10),
                 child: IconButton(
-                  icon: Icon(Icons.add),
+                  icon: const Icon(Icons.add),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
                     );
                   },
                 ),
               ),
-        Padding(
-          padding: const EdgeInsets.only(right: 10, top: 10),
+        const Padding(
+          padding: EdgeInsets.only(right: 10, top: 10),
           child: Icon(Icons.history),
         ),
         const Padding(
-          padding: const EdgeInsets.only(right: 10, top: 10),
+          padding: EdgeInsets.only(right: 10, top: 10),
           child: Icon(Icons.settings),
         ),
       ],
@@ -163,7 +165,7 @@ class _Home extends State<Home> {
                 });
               },
               child: Container(
-                margin: EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: 10),
                 width: 64,
                 height: 25,
                 decoration: ShapeDecoration(

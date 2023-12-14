@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:Suwotify/services/baseAPI/song.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
 
 // ignore: camel_case_types
@@ -11,6 +12,8 @@ class detailMusic extends StatefulWidget {
   @override
   State<detailMusic> createState() => _detailMusicState();
 }
+
+final Logger _logger = Logger();
 
 class MusicData {
   final String imageUrl;
@@ -38,18 +41,23 @@ class _detailMusicState extends State<detailMusic> {
 
   Future<MusicData> getDataMusic(int id) async {
     try {
+      _logger.i('Fetching data for music with id $id');
       http.Response? imageResponse = await getSong('image', id);
       http.Response? audioResponse = await getSong('audio', id);
       http.Response? artistResponse = await getSong('artist', id);
 
-      if (imageResponse != null && audioResponse != null) {
+      if (imageResponse != null &&
+          audioResponse != null &&
+          artistResponse != null) {
+        _logger.i('Data successfully fetched');
         var savedImageData = json.decode(imageResponse.body);
         // ignore: prefer_interpolation_to_compose_strings
         String imageUrl = savedImageData['data']['attributes']['image']['data']
             ['attributes']['url'];
 
-        var savedArtistData = json.decode(artistResponse!.body);
-        print(savedArtistData);
+        var savedArtistData = json.decode(artistResponse.body);
+        String artistName = savedArtistData['data']['attributes']['artist']
+            ['data']['attributes']['name'];
 
         String title = savedImageData['data']['attributes']['title'];
 
@@ -58,23 +66,23 @@ class _detailMusicState extends State<detailMusic> {
         String audioUrl = savedAudioData['data']['attributes']['audio']['data']
             ['attributes']['url'];
 
-        return MusicData(imageUrl, audioUrl, title, "a");
+        return MusicData(imageUrl, audioUrl, title, artistName);
       } else {
-        print('Failed to fetch data/Gagal mengambil data');
+        _logger.i('Failed to fetch data/Gagal mengambil data');
         throw Exception('Gagal mengambil data');
       }
     } catch (e) {
-      print('Error: $e');
+      _logger.i('Error: $e');
       throw Exception('Error: $e');
     }
   }
 
   void playAudio(String url) {
     _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-      print('lagi diputar: $state');
+      _logger.i('lagi diputar: $state');
       setState(() {
         isPlaying = state == PlayerState.playing;
-        print(isPlaying);
+        _logger.i('isPlaying: $isPlaying');
       });
     });
 
@@ -189,12 +197,13 @@ class _detailMusicState extends State<detailMusic> {
                               AudioPlayer()
                                   .onPlayerStateChanged
                                   .listen((PlayerState state) {
-                                print('lagi diputar: $state');
+                                _logger.i('lagi diputar: $state');
+
                               });
                               playAudio(audioUrl);
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: Colors
+                              backgroundColor: Colors
                                   .transparent, // Atur warna latar belakang menjadi transparent
                             ),
                             child: Icon(

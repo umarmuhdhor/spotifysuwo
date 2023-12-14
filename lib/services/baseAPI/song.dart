@@ -11,10 +11,8 @@ Future<http.Response?> getAllSong(String type) async {
   try {
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
-      // print(response);
       return response;
     } else {
-      // print('Gagal mengambil data audio: ${response.statusCode}');
       return null;
     }
   } catch (e) {
@@ -25,13 +23,10 @@ Future<http.Response?> getAllSong(String type) async {
 
 Future<http.Response?> getSong(String type, int id) async {
   String apiUrl = '';
-
   apiUrl = '${Config.baseUrl}/songs/${id}?populate[0]=${type}';
-
   try {
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
-      print(response);
       return response;
     } else {
       // print('Gagal mengambil data audio: ${response.statusCode}');

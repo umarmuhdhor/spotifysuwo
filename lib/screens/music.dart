@@ -1,4 +1,5 @@
-import 'package:Suwotify/components/config.dart';
+// ignore_for_file: camel_case_types, use_key_in_widget_constructors, library_private_types_in_public_api
+
 import 'package:Suwotify/screens/detailMusic.dart';
 import 'package:Suwotify/services/baseAPI/song.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,9 @@ import 'package:Suwotify/models/category.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:logger/logger.dart';
+
+final Logger _logger = Logger();
 
 class Music extends StatefulWidget {
   const Music({Key? key}) : super(key: key);
@@ -208,7 +212,6 @@ class _lastHeardState extends State<lastHeard> {
   }
 
   Future<void> getAllMusic() async {
-    print('tes');
     setState(() {
       loadingStatus = true;
     });
@@ -219,23 +222,16 @@ class _lastHeardState extends State<lastHeard> {
         dataMusic = Map.from(decodedData).values.toList();
         loadingStatus = false;
       });
-      // print(dataMusic);
-
-      if (dataMusic != null) {
-        for (int i = 0; i < dataMusic[0].length; i++) {
-          int id = dataMusic[0][i]['id'];
-          String url = (dataMusic[0][i]['attributes']['image']['data']
-              ['attributes']['formats']['thumbnail']['url']);
-          print(url);
-          imageMusic.add(MusicImage(id: id, url: "$url"));
-        }
-        print(imageMusic[5].id);
+      for (int i = 0; i < dataMusic[0].length; i++) {
+        int id = dataMusic[0][i]['id'];
+        String url = (dataMusic[0][i]['attributes']['image']['data']
+            ['attributes']['formats']['thumbnail']['url']);
+        imageMusic.add(MusicImage(id: id, url: url));
       }
 
-      print(dataMusic[0]['attributes']['image']['data']['attributes']['formats']
-          ['thumbnail']['url']);
     } catch (error) {
-      print(error.toString());
+      
+      _logger.i(error.toString());
     }
   }
 
@@ -246,7 +242,6 @@ class _lastHeardState extends State<lastHeard> {
         return Builder(
           builder: (BuildContext context) {
             return Container(
-              width: 100,
               margin: const EdgeInsets.symmetric(horizontal: 5.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
