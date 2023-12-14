@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+// ignore: camel_case_types
 class detailMusic extends StatefulWidget {
   final int musicId;
   const detailMusic({super.key, required this.musicId});
@@ -14,10 +15,13 @@ class detailMusic extends StatefulWidget {
 class MusicData {
   final String imageUrl;
   final String audioUrl;
+  final String title;
+  final String artist;
 
-  MusicData(this.imageUrl, this.audioUrl);
+  MusicData(this.imageUrl, this.audioUrl, this.title, this.artist);
 }
 
+// ignore: camel_case_types
 class _detailMusicState extends State<detailMusic> {
   late Future<MusicData> _dataFuture;
   late AudioPlayer _audioPlayer;
@@ -36,19 +40,25 @@ class _detailMusicState extends State<detailMusic> {
     try {
       http.Response? imageResponse = await getSong('image', id);
       http.Response? audioResponse = await getSong('audio', id);
+      http.Response? artistResponse = await getSong('artist', id);
 
       if (imageResponse != null && audioResponse != null) {
         var savedImageData = json.decode(imageResponse.body);
-        String imageUrl = 'http://localhost:1337' +
-            savedImageData['data']['attributes']['image']['data']['attributes']
-                ['url'];
+        // ignore: prefer_interpolation_to_compose_strings
+        String imageUrl = savedImageData['data']['attributes']['image']['data']
+            ['attributes']['url'];
+
+        var savedArtistData = json.decode(artistResponse!.body);
+        print(savedArtistData);
+
+        String title = savedImageData['data']['attributes']['title'];
 
         var savedAudioData = json.decode(audioResponse.body);
-        String audioUrl = 'http://localhost:1337' +
-            savedAudioData['data']['attributes']['audio']['data']['attributes']
-                ['url'];
+        // ignore: prefer_interpolation_to_compose_strings
+        String audioUrl = savedAudioData['data']['attributes']['audio']['data']
+            ['attributes']['url'];
 
-        return MusicData(imageUrl, audioUrl);
+        return MusicData(imageUrl, audioUrl, title, "a");
       } else {
         print('Failed to fetch data/Gagal mengambil data');
         throw Exception('Gagal mengambil data');
@@ -100,6 +110,8 @@ class _detailMusicState extends State<detailMusic> {
 
             String imageUrl = snapshot.data!.imageUrl;
             String audioUrl = snapshot.data!.audioUrl;
+            String title = snapshot.data!.title;
+            String artis = snapshot.data!.artist;
 
             return Container(
               width: MediaQuery.of(context).size.width,
@@ -130,18 +142,18 @@ class _detailMusicState extends State<detailMusic> {
                       ),
                     ),
                   ),
-                  const Text(
-                    'StarBoy',
-                    style: TextStyle(
+                  Text(
+                    title,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 5),
-                  const Text(
-                    'Kaleb J',
-                    style: TextStyle(
+                  Text(
+                    artis,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                     ),
@@ -170,6 +182,7 @@ class _detailMusicState extends State<detailMusic> {
                           height: 60,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
+                            color: Colors.transparent,
                           ),
                           child: ElevatedButton(
                             onPressed: () {
@@ -180,6 +193,10 @@ class _detailMusicState extends State<detailMusic> {
                               });
                               playAudio(audioUrl);
                             },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors
+                                  .transparent, // Atur warna latar belakang menjadi transparent
+                            ),
                             child: Icon(
                               isPlaying ? Icons.stop : Icons.play_arrow,
                               color: Colors.white,
@@ -194,7 +211,7 @@ class _detailMusicState extends State<detailMusic> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
-                            Icons.arrow_forward_ios_rounded,
+                            Icons.keyboard_double_arrow_right_rounded,
                             color: Colors.white,
                             size: 30,
                           ),

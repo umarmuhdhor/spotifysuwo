@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'package:Suwotify/screens/playlistScreen.dart';
+import 'package:Suwotify/screens/detailMusic.dart';
 import 'package:Suwotify/services/baseAPI/song.dart';
-import 'package:Suwotify/services/baseAPI/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:Suwotify/components/StorageKey.dart';
-import 'package:Suwotify/screens/library/libraryMusic.dart';
-import 'package:Suwotify/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Suwotify/services/baseAPI/playlist.dart';
@@ -36,7 +33,20 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   List<PlaylistMusicData> _playlistMusic = [];
   bool loadingStatus = false;
 
-  void navigateToDetailMusic(int musicId) {}
+  @override
+  void initState() {
+    super.initState();
+    getAllPlaylist();
+  }
+
+  void navigateToDetailMusic(BuildContext context, int musicId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => detailMusic(musicId: musicId),
+      ),
+    );
+  }
 
   Future<void> getAllPlaylist() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,9 +56,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
     try {
       http.Response? response = await getSongPlaylist(
           widget.id, prefs.getString(StorageKey.TOKEN) ?? "");
-
       final decodedData = json.decode(response!.body);
-
       setState(() {
         dataPlaylist = Map.from(decodedData).values.toList();
         loadingStatus = false;
@@ -56,9 +64,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
 
       if (dataPlaylist != null) {
         for (int i = 0; i < dataPlaylist[0].length; i++) {
-          print(dataPlaylist[0]);
-          int id = (dataPlaylist[0][i]['attributes']['songs']['data']['id']);
-          print(id);
+
+          int id = (dataPlaylist[0]['attributes']['songs']['data'][i]['id']);
 
           http.Response? response2 = await getSong('image', id);
           final decodedData = json.decode(response2!.body);
@@ -68,19 +75,16 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
           });
 
           if (dataPlaySong != null) {
-            int id = (dataPlaySong[0][i]['id']);
-            String name = (dataPlaySong[0][i]['attributes']['title']);
-            String url = (dataPlaySong[0][i]['attributes']['title']);
-            // String deskripsi = (dataPlaylist[0][i]['attributes']['deskripsi']);
-            // int user =
-            //     (dataPlaylist[0][i]['attributes']['users']['data']['id']);
-            // _playlistMusic.add(
-            //   PlaylistMusicData(
-            //     id: id,
-            //     url: "http://localhost:1337$url",
-            //     name: name,
-            //   ),
-            // );
+            int id = (dataPlaySong[0]['id']);
+            String name = (dataPlaySong[0]['attributes']['title']);
+            String url = (dataPlaySong[0]['attributes']['image']['data']['attributes']['formats']['thumbnail']['url']);
+            _playlistMusic.add(
+              PlaylistMusicData(
+                id: id,
+                url: url,
+                name: name,
+              ),
+            );
           }
         }
       }
@@ -134,7 +138,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                           fit: BoxFit.cover,
                         ),
                         onTap: () {
-                          navigateToDetailMusic(_playlistMusic[index].id);
+                          navigateToDetailMusic(
+                              context, _playlistMusic[index].id);
                         },
                       ),
                     );

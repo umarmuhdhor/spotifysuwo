@@ -50,14 +50,12 @@ class _SearchScreenState extends State<SearchScreen> {
           String name = (dataMusic[0][i]['attributes']['title']);
           _music.add(MusicData(
             id: id,
-            url: "http://localhost:1337$url",
+            url: url,
             name: name,
           ));
         }
       }
 
-      print(dataMusic[0]['attributes']['image']['data']['attributes']['formats']
-          ['thumbnail']['url']);
     } catch (error) {
       print(error.toString());
     }
@@ -103,26 +101,29 @@ class _SearchScreenState extends State<SearchScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _searchController,
-                onChanged: onSearchTextChanged,
-                decoration: InputDecoration(
-                  labelText: 'Search',
-                  labelStyle: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  contentPadding: const EdgeInsets.only(left: 20),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Colors.white,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
+              child: Container(
+                margin: EdgeInsets.only(top: 30),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: onSearchTextChanged,
+                  decoration: InputDecoration(
+                    labelText: 'Search',
+                    labelStyle: const TextStyle(
                       color: Colors.white,
+                    ),
+                    contentPadding: const EdgeInsets.only(left: 20),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

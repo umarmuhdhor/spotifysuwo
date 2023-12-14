@@ -1,3 +1,4 @@
+import 'package:Suwotify/components/config.dart';
 import 'package:Suwotify/screens/detailMusic.dart';
 import 'package:Suwotify/services/baseAPI/song.dart';
 import 'package:flutter/material.dart';
@@ -207,13 +208,13 @@ class _lastHeardState extends State<lastHeard> {
   }
 
   Future<void> getAllMusic() async {
+    print('tes');
     setState(() {
       loadingStatus = true;
     });
     try {
       http.Response? response = await getAllSong('image');
       final decodedData = json.decode(response!.body);
-
       setState(() {
         dataMusic = Map.from(decodedData).values.toList();
         loadingStatus = false;
@@ -225,7 +226,8 @@ class _lastHeardState extends State<lastHeard> {
           int id = dataMusic[0][i]['id'];
           String url = (dataMusic[0][i]['attributes']['image']['data']
               ['attributes']['formats']['thumbnail']['url']);
-          imageMusic.add(MusicImage(id: id, url: "http://localhost:1337$url"));
+          print(url);
+          imageMusic.add(MusicImage(id: id, url: "$url"));
         }
         print(imageMusic[5].id);
       }
@@ -322,7 +324,7 @@ class _RecommendedState extends State<Recommended> {
                             ),
                           ),
                         ),
-                        Text("HAAAAAAAAA"),
+                        Text("HAAAAAAA"),
                       ],
                     ),
                   )

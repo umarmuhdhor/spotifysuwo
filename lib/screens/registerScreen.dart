@@ -4,6 +4,7 @@ import 'package:Suwotify/screens/app.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:Suwotify/components/config.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -15,9 +16,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  bool _isLoading = false;
+
   Future<void> registerUser() async {
-    final String apiUrl = "http://localhost:1337/api/auth/local/register";
+    setState(() {
+      _isLoading = true;
+    });
+
+    final String apiUrl = "${Config.baseUrl}/auth/local/register";
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -46,6 +54,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     } catch (error) {
       print("Kesalahan: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -169,22 +181,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 width: MediaQuery.of(context).size.width - 90,
                 height: 40,
                 child: ElevatedButton(
-                  onPressed: () {
-                    registerUser();
-                  },
+                  onPressed: _isLoading ? null : () => registerUser(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: const Text(
-                    "Daftar",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
+                  child: _isLoading
+                      ? CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.black),
+                        )
+                      : const Text(
+                          "Daftar",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
                 ),
               ),
             ],

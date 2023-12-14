@@ -88,7 +88,7 @@ class _Home extends State<Home> {
               },
               child: Container(
                 margin: const EdgeInsets.only(right: 10),
-                width: 72,
+                width: 64,
                 height: 25,
                 decoration: ShapeDecoration(
                   color: tabColor(0),
@@ -126,7 +126,7 @@ class _Home extends State<Home> {
               },
               child: Container(
                 margin: const EdgeInsets.only(right: 10),
-                width: 70,
+                width: 64,
                 height: 25,
                 decoration: ShapeDecoration(
                   color: tabColor(1),
@@ -164,7 +164,7 @@ class _Home extends State<Home> {
               },
               child: Container(
                 margin: EdgeInsets.only(right: 10),
-                width: 72,
+                width: 64,
                 height: 25,
                 decoration: ShapeDecoration(
                   color: tabColor(2),

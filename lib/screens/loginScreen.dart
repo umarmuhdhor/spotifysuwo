@@ -1,13 +1,18 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 import 'package:Suwotify/components/StorageKey.dart';
 import 'package:Suwotify/screens/app.dart';
 import 'package:Suwotify/screens/registerScreen.dart';
+import 'package:Suwotify/services/baseAPI/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/baseAPI/massageHandle.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -18,42 +23,23 @@ class _LoginPageState extends State<LoginPage> {
   FocusNode usernameFocusNode = FocusNode();
   String? _errorTextPass;
   String? _errorTextEmail;
+  bool _isLoading = false;
 
   bool showUsernameError = false;
 
-  Future<void> loginUser() async {
-    final String apiUrl = "http://localhost:1337/api/auth/local";
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> LoginUser(
+      BuildContext context, String email, String password) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        body: {
-          "identifier": emailController.text,
-          "password": passwordController.text,
-        },
-      );
-
-      if (response.statusCode == 200) {
-        print("Login Berhasil");
-        final data = jsonDecode(response.body);
-        final token = data['jwt'];
-        print("Token dari Response: $token");
-        prefs.setString(StorageKey.TOKEN, token);
-        print(prefs.getString(StorageKey.TOKEN));
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => MyApp()),
-          (route) => false,
-        );
-      } else {
-        print("Login Gagal: ${response.statusCode}");
-        print("Pesan Kesalahan: ${response.body}");
-        final responseData = jsonDecode(response.body);
-        final errorMessage = responseData['error']['message'];
-        showErrorAlert(context, errorMessage);
-      }
+      await loginUser(context, email, password);
     } catch (error) {
-      print("Error: $error");
+      print("Error during login: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -157,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     Container(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -176,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                                     builder: (context) => RegisterScreen()),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               "Buat Akun?",
                               style: TextStyle(
                                 color: Colors.white,
@@ -201,7 +187,8 @@ class _LoginPageState extends State<LoginPage> {
                 height: 40,
                 child: ElevatedButton(
                   onPressed: () {
-                    loginUser();
+                    LoginUser(
+                        context, emailController.text, passwordController.text);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -209,13 +196,17 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: const Text(
-                    "Submit",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                        )
+                      : const Text(
+                          "Submit",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
                 ),
               ),
             ],

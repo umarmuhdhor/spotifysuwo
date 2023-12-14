@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'dart:convert';
 import 'package:Suwotify/screens/playlistScreen.dart';
 import 'package:Suwotify/services/baseAPI/user.dart';
@@ -19,7 +21,12 @@ class YourLibrary extends StatefulWidget {
 class _YourLibraryState extends State<YourLibrary> {
   late String token = '';
   bool loadingStatus = false;
-  final Tab = [LibraryMusic(), LibraryMusic(), LibraryMusic()];
+  // ignore: non_constant_identifier_names
+  final Tab = [
+    const LibraryMusic(),
+    const LibraryMusic(),
+    const LibraryMusic()
+  ];
   Color tabColor(int index) {
     return index == currentTabIndex
         ? const Color(0xB2D9D9D9)
@@ -134,7 +141,7 @@ class _YourLibraryState extends State<YourLibrary> {
                 });
               },
               child: Container(
-                margin: EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: 10),
                 width: 72,
                 height: 25,
                 decoration: ShapeDecoration(
@@ -176,8 +183,8 @@ class _YourLibraryState extends State<YourLibrary> {
       backgroundColor: const Color.fromRGBO(56, 27, 136, 1),
       elevation: 0.0,
       title: Container(
-        margin: EdgeInsets.only(top: 30, left: 10, right: 10),
-        child: Row(
+        margin: const EdgeInsets.only(top: 30, left: 10, right: 10),
+        child: const Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -217,7 +224,7 @@ class _YourLibraryState extends State<YourLibrary> {
                   width: 200,
                   height: 35,
                   decoration: ShapeDecoration(
-                    color: Color.fromRGBO(56, 27, 136, 1),
+                    color: const Color.fromRGBO(56, 27, 136, 1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -226,13 +233,14 @@ class _YourLibraryState extends State<YourLibrary> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.transparent,
+                      backgroundColor: Colors.transparent,
                     ),
-                    child: Text(
+                    child: const Text(
                       'Login Dulu Dong',
                       style: TextStyle(
                         color: Colors.white,
@@ -263,7 +271,7 @@ class _YourLibraryState extends State<YourLibrary> {
                       child: ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
+                          backgroundColor: Colors.transparent,
                           padding: const EdgeInsets.all(10),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -279,7 +287,7 @@ class _YourLibraryState extends State<YourLibrary> {
                         ),
                       ),
                     ),
-                    playlist()
+                    const playlist()
                   ],
                 ),
               ),
@@ -289,6 +297,8 @@ class _YourLibraryState extends State<YourLibrary> {
 }
 
 class playlist extends StatefulWidget {
+  const playlist({super.key});
+
   @override
   State<playlist> createState() => _playlistState();
 }
@@ -356,7 +366,6 @@ class _playlistState extends State<playlist> {
           'image', 'users', prefs.getString(StorageKey.TOKEN) ?? "");
 
       final decodedData = json.decode(response!.body);
-
       setState(() {
         dataPlaylist = Map.from(decodedData).values.toList();
         loadingStatus = false;
@@ -365,18 +374,23 @@ class _playlistState extends State<playlist> {
       if (dataPlaylist != null) {
         await getUserData();
         for (int i = 0; i < dataPlaylist[0].length; i++) {
-          print(dataPlaylist[0]);
+          print(dataPlaylist[0][i]['attributes']);
           int id = dataPlaylist[0][i]['id'];
+          print(id);
           String url = (dataPlaylist[0][i]['attributes']['image']['data']
-              ['attributes']['formats']['thumbnail']['url']);
+              ['attributes']['formats']['large']['url']);
+          print(url);
           String name = (dataPlaylist[0][i]['attributes']['name']);
+          print(name);
           String deskripsi = (dataPlaylist[0][i]['attributes']['deskripsi']);
+          print(deskripsi);
           int user = (dataPlaylist[0][i]['attributes']['users']['data']['id']);
+          print(user);
           if (user == idUser) {
             playlist.add(
               playlistData(
                 id: id,
-                url: "http://localhost:1337$url",
+                url: url,
                 description: deskripsi,
                 name: name,
               ),
@@ -435,18 +449,18 @@ class _playlistState extends State<playlist> {
                         margin: const EdgeInsets.only(right: 10),
                         child: Text(
                           currentPlaylist.name,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Container(
                         margin: const EdgeInsets.only(right: 10),
                         child: Text(
                           currentPlaylist.description,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
                           ),

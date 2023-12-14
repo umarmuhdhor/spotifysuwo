@@ -8,11 +8,13 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
   
   @override
+  // ignore: library_private_types_in_public_api
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final Tabs = [Home(), Search(), YourLibrary()];
+  // ignore: non_constant_identifier_names
+  final Tabs = [const Home(), const Search(), const YourLibrary()];
   int currentTabIndex = 0;
   @override
   Widget build(BuildContext context) {

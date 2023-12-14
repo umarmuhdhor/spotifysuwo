@@ -16,6 +16,7 @@ Future<http.Response?> getPlaylist(
     );
     if (response.statusCode == 200) {
       // print(response.body);
+
       return response;
     } else {
       print('Gagal mengambil data audio: ${response.statusCode}');
@@ -29,7 +30,7 @@ Future<http.Response?> getPlaylist(
 
 Future<http.Response?> getSongPlaylist(int id, String token) async {
   String apiUrl = '';
-  apiUrl = '${Config.baseUrl}/playlists/$id';
+  apiUrl = '${Config.baseUrl}/playlists/$id?populate[0]=songs';
 
   try {
     final response = await http.get(

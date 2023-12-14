@@ -138,7 +138,7 @@ class Search extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 30, right: 10, left: 10),
+            margin: const EdgeInsets.only(top: 30, right: 10, left: 10),
             alignment: Alignment.topLeft,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +159,7 @@ class Search extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 30, right: 10, left: 10),
+            margin: const EdgeInsets.only(top: 30, right: 10, left: 10),
             child: createGrid(),
           )
         ],
@@ -197,7 +197,7 @@ class _RecommendedState extends State<Recommended> {
               builder: (BuildContext context) {
                 return Container(
                   width: 100,
-                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
                   decoration: BoxDecoration(
                     color: currentIndex == index
                         ? Colors.grey
