@@ -43,7 +43,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => detailMusic(musicId: musicId),
+        builder: (context) => DetailMusic(musicId: musicId),
       ),
     );
   }

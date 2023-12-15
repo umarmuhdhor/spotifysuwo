@@ -5,6 +5,7 @@ void main() {
   runApp(MaterialApp(
       title: 'Suwotify',
       debugShowCheckedModeBanner: false,
+      debugShowMaterialGrid: false,
       home: MyApp()),
       );
 }

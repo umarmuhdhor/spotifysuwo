@@ -228,44 +228,47 @@ class _lastHeardState extends State<lastHeard> {
             ['attributes']['formats']['thumbnail']['url']);
         imageMusic.add(MusicImage(id: id, url: url));
       }
-
     } catch (error) {
-      
       _logger.i(error.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return CarouselSlider(
-      items: imageMusic.map((item) {
-        return Builder(
-          builder: (BuildContext context) {
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: GestureDetector(
-                  onTap: () {
-                    navigateToDetailMusic(context, item.id);
-                  },
-                  child: Image.network(
-                    item.url,
-                    fit: BoxFit.cover,
+    return Column(
+      children: [
+        if (loadingStatus) const CircularProgressIndicator(),
+        CarouselSlider(
+          items: imageMusic.map((item) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: GestureDetector(
+                      onTap: () {
+                        navigateToDetailMusic(context, item.id);
+                      },
+                      child: Image.network(
+                        item.url,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             );
-          },
-        );
-      }).toList(),
-      options: CarouselOptions(
-        padEnds: false,
-        height: 100,
-        autoPlay: true,
-        aspectRatio: 1.0,
-        viewportFraction: 0.34,
-      ),
+          }).toList(),
+          options: CarouselOptions(
+            padEnds: false,
+            height: 100,
+            autoPlay: true,
+            aspectRatio: 1.0,
+            viewportFraction: 0.34,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -440,7 +443,7 @@ void navigateToDetailMusic(BuildContext context, int musicId) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => detailMusic(musicId: musicId),
+      builder: (context) => DetailMusic(musicId: musicId),
     ),
   );
 }

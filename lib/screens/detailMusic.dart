@@ -1,16 +1,18 @@
 import 'dart:convert';
 import 'package:Suwotify/services/baseAPI/song.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart' as audio;
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
 
-// ignore: camel_case_types
-class detailMusic extends StatefulWidget {
+class DetailMusic extends StatefulWidget {
   final int musicId;
-  const detailMusic({super.key, required this.musicId});
+
+  const DetailMusic({Key? key, required this.musicId}) : super(key: key);
+
   @override
-  State<detailMusic> createState() => _detailMusicState();
+  State<DetailMusic> createState() => _DetailMusicState();
 }
 
 final Logger _logger = Logger();
@@ -24,24 +26,30 @@ class MusicData {
   MusicData(this.imageUrl, this.audioUrl, this.title, this.artist);
 }
 
-// ignore: camel_case_types
-class _detailMusicState extends State<detailMusic> {
+class _DetailMusicState extends State<DetailMusic> {
   late Future<MusicData> _dataFuture;
-  late AudioPlayer _audioPlayer;
+  late audio.AudioPlayer _audioPlayer;
   late int musicId;
   bool isPlaying = false;
+  late YoutubePlayerController _youtubeController;
 
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer();
+    _audioPlayer = audio.AudioPlayer();
     musicId = widget.musicId;
     _dataFuture = getDataMusic(musicId);
+    _youtubeController = YoutubePlayerController(
+      initialVideoId: 'k4TbAUAp3KU',
+      flags: YoutubePlayerFlags(
+        autoPlay: true,
+        mute: false,
+      ),
+    );
   }
 
   Future<MusicData> getDataMusic(int id) async {
     try {
-      _logger.i('Fetching data for music with id $id');
       http.Response? imageResponse = await getSong('image', id);
       http.Response? audioResponse = await getSong('audio', id);
       http.Response? artistResponse = await getSong('artist', id);
@@ -49,9 +57,7 @@ class _detailMusicState extends State<detailMusic> {
       if (imageResponse != null &&
           audioResponse != null &&
           artistResponse != null) {
-        _logger.i('Data successfully fetched');
         var savedImageData = json.decode(imageResponse.body);
-        // ignore: prefer_interpolation_to_compose_strings
         String imageUrl = savedImageData['data']['attributes']['image']['data']
             ['attributes']['url'];
 
@@ -62,35 +68,33 @@ class _detailMusicState extends State<detailMusic> {
         String title = savedImageData['data']['attributes']['title'];
 
         var savedAudioData = json.decode(audioResponse.body);
-        // ignore: prefer_interpolation_to_compose_strings
         String audioUrl = savedAudioData['data']['attributes']['audio']['data']
             ['attributes']['url'];
 
         return MusicData(imageUrl, audioUrl, title, artistName);
       } else {
-        _logger.i('Failed to fetch data/Gagal mengambil data');
-        throw Exception('Gagal mengambil data');
+        throw Exception('Failed to fetch data');
       }
     } catch (e) {
-      _logger.i('Error: $e');
       throw Exception('Error: $e');
     }
   }
 
   void playAudio(String url) {
-    _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-      _logger.i('lagi diputar: $state');
+    _audioPlayer.onPlayerStateChanged.listen((audio.PlayerState state) {
       setState(() {
-        isPlaying = state == PlayerState.playing;
-        _logger.i('isPlaying: $isPlaying');
+        isPlaying = state == audio.PlayerState.playing;
       });
     });
 
     if (isPlaying) {
       _audioPlayer.pause();
     } else {
-      _audioPlayer.play(UrlSource(url));
+      _audioPlayer.play(audio.UrlSource(url));
     }
+
+    // Menutup pemutar video YouTube jika sedang berjalan
+    _youtubeController.pause();
   }
 
   createAppBar() {
@@ -119,7 +123,7 @@ class _detailMusicState extends State<detailMusic> {
             String imageUrl = snapshot.data!.imageUrl;
             String audioUrl = snapshot.data!.audioUrl;
             String title = snapshot.data!.title;
-            String artis = snapshot.data!.artist;
+            String artist = snapshot.data!.artist;
 
             return Container(
               width: MediaQuery.of(context).size.width,
@@ -160,7 +164,7 @@ class _detailMusicState extends State<detailMusic> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    artis,
+                    artist,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -176,11 +180,12 @@ class _detailMusicState extends State<detailMusic> {
                         Container(
                           width: 60,
                           height: 60,
+                          margin: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
-                            Icons.keyboard_double_arrow_left_rounded,
+                            Icons.skip_previous,
                             color: Colors.white,
                             size: 30,
                           ),
@@ -194,17 +199,14 @@ class _detailMusicState extends State<detailMusic> {
                           ),
                           child: ElevatedButton(
                             onPressed: () {
-                              AudioPlayer()
-                                  .onPlayerStateChanged
-                                  .listen((PlayerState state) {
+                              _audioPlayer.onPlayerStateChanged
+                                  .listen((audio.PlayerState state) {
                                 _logger.i('lagi diputar: $state');
-
                               });
                               playAudio(audioUrl);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors
-                                  .transparent, // Atur warna latar belakang menjadi transparent
+                              backgroundColor: Colors.transparent,
                             ),
                             child: Icon(
                               isPlaying ? Icons.stop : Icons.play_arrow,
@@ -220,7 +222,7 @@ class _detailMusicState extends State<detailMusic> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
-                            Icons.keyboard_double_arrow_right_rounded,
+                            Icons.skip_next,
                             color: Colors.white,
                             size: 30,
                           ),
@@ -249,6 +251,16 @@ class _detailMusicState extends State<detailMusic> {
                         ),
                       ],
                     ),
+                  ),
+                  YoutubePlayer(
+                    controller: _youtubeController,
+                    showVideoProgressIndicator: true,
+                    onReady: () {
+                      _logger.i('Video is ready.');
+                    },
+                    onEnded: (data) {
+                      _logger.i('Video has ended.');
+                    },
                   ),
                 ],
               ),
