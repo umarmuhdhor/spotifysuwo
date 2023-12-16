@@ -30,7 +30,7 @@ class PlaylistMusicData {
 class _PlaylistScreenState extends State<PlaylistScreen> {
   List<dynamic> dataPlaylist = [];
   List<dynamic> dataPlaySong = [];
-  List<PlaylistMusicData> _playlistMusic = [];
+  final List<PlaylistMusicData> _playlistMusic = [];
   bool loadingStatus = false;
 
   @override
@@ -62,31 +62,24 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         loadingStatus = false;
       });
 
-      if (dataPlaylist != null) {
-        for (int i = 0; i < dataPlaylist[0].length; i++) {
+      for (int i = 0; i < dataPlaylist[0].length; i++) {
+        int id = (dataPlaylist[0]['attributes']['songs']['data'][i]['id']);
 
-          int id = (dataPlaylist[0]['attributes']['songs']['data'][i]['id']);
+        http.Response? response2 = await getSong('image', id);
+        final decodedData = json.decode(response2!.body);
 
-          http.Response? response2 = await getSong('image', id);
-          final decodedData = json.decode(response2!.body);
+        setState(() {
+          dataPlaySong = Map.from(decodedData).values.toList();
+        });
 
-          setState(() {
-            dataPlaySong = Map.from(decodedData).values.toList();
-          });
-
-          if (dataPlaySong != null) {
-            int id = (dataPlaySong[0]['id']);
-            String name = (dataPlaySong[0]['attributes']['title']);
-            String url = (dataPlaySong[0]['attributes']['image']['data']['attributes']['formats']['thumbnail']['url']);
-            _playlistMusic.add(
-              PlaylistMusicData(
-                id: id,
-                url: url,
-                name: name,
-              ),
-            );
-          }
-        }
+        _playlistMusic.add(
+          PlaylistMusicData(
+            id: (dataPlaySong[0]['id']),
+            url: (dataPlaySong[0]['attributes']['image']['data']['attributes']
+                ['formats']['thumbnail']['url']),
+            name: (dataPlaySong[0]['attributes']['title']),
+          ),
+        );
       }
     } catch (error) {
       print(error.toString());
@@ -120,31 +113,29 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         child: Column(
           children: [
             Expanded(
-              child: Container(
-                child: ListView.builder(
-                  itemCount: _playlistMusic.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.all(10),
-                      child: ListTile(
-                        title: Text(
-                          _playlistMusic[index].name,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        leading: Image.network(
-                          _playlistMusic[index].url,
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
-                        onTap: () {
-                          navigateToDetailMusic(
-                              context, _playlistMusic[index].id);
-                        },
+              child: ListView.builder(
+                itemCount: _playlistMusic.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.all(10),
+                    child: ListTile(
+                      title: Text(
+                        _playlistMusic[index].name,
+                        style: const TextStyle(color: Colors.white),
                       ),
-                    );
-                  },
-                ),
+                      leading: Image.network(
+                        _playlistMusic[index].url,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
+                      onTap: () {
+                        navigateToDetailMusic(
+                            context, _playlistMusic[index].id);
+                      },
+                    ),
+                  );
+                },
               ),
             ),
           ],

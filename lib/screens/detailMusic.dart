@@ -41,7 +41,7 @@ class _DetailMusicState extends State<DetailMusic> {
     _dataFuture = getDataMusic(musicId);
     _youtubeController = YoutubePlayerController(
       initialVideoId: 'k4TbAUAp3KU',
-      flags: YoutubePlayerFlags(
+      flags: const YoutubePlayerFlags(
         autoPlay: true,
         mute: false,
       ),
