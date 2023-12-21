@@ -1,3 +1,6 @@
+import 'package:Suwotify/screens/accountSetting.dart';
+import 'package:Suwotify/screens/notificationSetting.dart';
+import 'package:Suwotify/screens/playbackSetting.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -26,21 +29,21 @@ class SettingsScreen extends StatelessWidget {
             title: Text('Account Settings'),
             onTap: () {
               // Navigasi ke layar pengaturan akun
-              // Misalnya: Navigator.push(context, MaterialPageRoute(builder: (context) => AccountSettingsScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AccountSettingsPage()));
             },
           ),
           ListTile(
             title: Text('Notification Settings'),
             onTap: () {
               // Navigasi ke layar pengaturan notifikasi
-              // Misalnya: Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationSettingsScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationSettingsPage()));
             },
           ),
           ListTile(
             title: Text('Playback Settings'),
             onTap: () {
               // Navigasi ke layar pengaturan pemutaran
-              // Misalnya: Navigator.push(context, MaterialPageRoute(builder: (context) => PlaybackSettingsScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PlaybackSettingsPage()));
             },
           ),
           // Tambahkan opsi pengaturan lainnya sesuai kebutuhan
