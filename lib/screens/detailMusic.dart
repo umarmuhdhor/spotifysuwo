@@ -93,7 +93,6 @@ class _DetailMusicState extends State<DetailMusic> {
       _audioPlayer.play(audio.UrlSource(url));
     }
 
-    // Menutup pemutar video YouTube jika sedang berjalan
     _youtubeController.pause();
   }
 
@@ -101,6 +100,13 @@ class _DetailMusicState extends State<DetailMusic> {
     return AppBar(
       backgroundColor: const Color.fromRGBO(56, 27, 136, 1),
       elevation: 0.0,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.favorite),
+          onPressed: () {},
+        ),
+      ],
+      iconTheme: const IconThemeData(color: Colors.white),
     );
   }
 
@@ -140,7 +146,7 @@ class _DetailMusicState extends State<DetailMusic> {
               child: Column(
                 children: [
                   Container(
-                    margin: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(top: 20),
                     width: 300,
                     height: 300,
                     decoration: BoxDecoration(
@@ -154,21 +160,25 @@ class _DetailMusicState extends State<DetailMusic> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  
                   Text(
                     title,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
+                    textAlign: TextAlign.left, 
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 2),
                   Text(
                     artist,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 12,
                     ),
+                    textAlign: TextAlign.left, 
                   ),
                   Container(
                     height: 60,

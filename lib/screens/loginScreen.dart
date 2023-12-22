@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration
-                                    .underline, // Menambahkan garis bawah pada teks
+                                    .underline, 
                               ),
                             ),
                           ),

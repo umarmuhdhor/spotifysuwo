@@ -1,3 +1,4 @@
+import 'package:Suwotify/screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:Suwotify/screens/app.dart';
 
@@ -6,6 +7,6 @@ void main() {
       title: 'Suwotify',
       debugShowCheckedModeBanner: false,
       debugShowMaterialGrid: false,
-      home: MyApp()),
+      home: SplashScreen()),
       );
 }

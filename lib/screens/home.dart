@@ -49,6 +49,7 @@ class _Home extends State<Home> {
                 padding: const EdgeInsets.only(right: 10, top: 10),
                 child: IconButton(
                   icon: const Icon(Icons.account_circle),
+                  color: Colors.white,
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -61,17 +62,19 @@ class _Home extends State<Home> {
                 padding: const EdgeInsets.only(right: 10, top: 10),
                 child: IconButton(
                   icon: const Icon(Icons.add),
+                  color: Colors.white,
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
                     );
                   },
                 ),
               ),
         const Padding(
           padding: EdgeInsets.only(right: 10, top: 10),
-          child: Icon(Icons.history),
+          child: Icon(Icons.history,),
         ),
         const Padding(
           padding: EdgeInsets.only(right: 10, top: 10),
