@@ -21,6 +21,8 @@ class YourLibrary extends StatefulWidget {
 class _YourLibraryState extends State<YourLibrary> {
   late String token = '';
   bool loadingStatus = false;
+  int idUser = 0;
+  List<dynamic> dataUser = [];
   // ignore: non_constant_identifier_names
   final Tab = [
     const LibraryMusic(),
@@ -39,6 +41,7 @@ class _YourLibraryState extends State<YourLibrary> {
   void initState() {
     super.initState();
     getToken();
+    getUserData();
   }
 
   void getToken() async {
@@ -46,6 +49,27 @@ class _YourLibraryState extends State<YourLibrary> {
     setState(() {
       token = prefs.getString(StorageKey.TOKEN) as String;
     });
+  }
+
+  Future<void> getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loadingStatus = true;
+    });
+    try {
+      http.Response? response =
+          await getUser(prefs.getString(StorageKey.TOKEN) ?? "");
+      final decodedData = json.decode(response!.body);
+
+      setState(() {
+        dataUser = Map.from(decodedData).values.toList();
+        loadingStatus = false;
+      });
+      idUser = dataUser[0];
+      print("id : $idUser");
+    } catch (error) {
+      print(error.toString());
+    }
   }
 
   createNavBarTop() {
@@ -205,6 +229,62 @@ class _YourLibraryState extends State<YourLibrary> {
     );
   }
 
+  _showAddNewModal(BuildContext context) {
+    TextEditingController nameController = TextEditingController();
+    TextEditingController descriptionController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Add New Playlist',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    // Access the input values
+                    String name = nameController.text;
+                    String description = descriptionController.text;
+                    createPlaylist(idUser, token, name, description);
+                    Navigator.pop(context); // Close the modal
+                  },
+                  child: Text('Add'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -279,10 +359,24 @@ class _YourLibraryState extends State<YourLibrary> {
                           elevation: 0,
                           minimumSize: const Size.fromHeight(50),
                         ),
-                        child: const Text(
-                          'Add New',
-                          style: TextStyle(
-                            color: Colors.white,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _showAddNewModal(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            padding: const EdgeInsets.all(10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 0,
+                            minimumSize: const Size.fromHeight(50),
+                          ),
+                          child: const Text(
+                            'Add New',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -374,19 +468,16 @@ class _playlistState extends State<playlist> {
       if (dataPlaylist != null) {
         await getUserData();
         for (int i = 0; i < dataPlaylist[0].length; i++) {
-          print(dataPlaylist[0][i]['attributes']);
+          print(dataPlaylist[0][i]);
+          print(dataPlaylist[0].length);
           int id = dataPlaylist[0][i]['id'];
-          print(id);
           String url = (dataPlaylist[0][i]['attributes']['image']['data']
               ['attributes']['formats']['large']['url']);
-          print(url);
           String name = (dataPlaylist[0][i]['attributes']['name']);
-          print(name);
           String deskripsi = (dataPlaylist[0][i]['attributes']['deskripsi']);
-          print(deskripsi);
           int user = (dataPlaylist[0][i]['attributes']['users']['data']['id']);
-          print(user);
           if (user == idUser) {
+            print(1);
             playlist.add(
               playlistData(
                 id: id,
@@ -396,6 +487,7 @@ class _playlistState extends State<playlist> {
               ),
             );
           }
+          print("done1");
         }
       }
     } catch (error) {

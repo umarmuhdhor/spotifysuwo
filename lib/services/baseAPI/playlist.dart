@@ -52,3 +52,35 @@ Future<http.Response?> getSongPlaylist(int id, String token) async {
     return null;
   }
 }
+
+Future<http.Response?> createPlaylist(
+    int id, String token, String name, String desk) async {
+  String apiUrl = '';
+  apiUrl = '${Config.baseUrl}/playlists';
+  print("tes");
+  try {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        "name": name,
+        "deskripsi" : desk,
+        "users": id.toString(),
+      },
+    );
+    print("tes2");
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return response;
+    } else {
+      print('Gagal mengambil playlist: ${response.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    print('Error: $e');
+    return null;
+  }
+}
